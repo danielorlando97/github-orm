@@ -1,0 +1,24 @@
+tropicalization:
+  theme:
+    name: "Client-Side Tropicalization"
+    description: "Client-Side Tropicalization is a theme that makes the website look more tropical."
+    author: "Client-Side Tropicalization"
+    version: "1.0.0"
+    url: "https://client-side-tropicalization.com"
+    support:
+      email: "support@client-side-tropicalization.com"
+      website: "https://client-side-tropicalization.com"
+      discord: "https://discord.gg/client-side-tropicalization"
+      twitter: "https://twitter.com/client-side-tropicalization"
+      github: "https://github.com/client-side-tropicalization"
+  user_preferences:
+    theme: "Client-Side Tropicalization"
+    language: "English"
+    timezone: "UTC"
+    currency: "USD"
+    date_format: "MM/DD/YYYY"
+    time_format: "HH:mm:ss"
+    timezone: "UTC"
+    currency: "USD"
+    date_format: "MM/DD/YYYY"
+    time_format: "HH:mm:ss"

@@ -1,0 +1,24 @@
+tropicalization:
+  theme:
+    name: "Tropicalization"
+    description: "Tropicalization is a theme that makes the website look more tropical."
+    author: "Tropicalization"
+    version: "1.0.0"
+    url: "https://tropicalization.com"
+    support:
+      email: "support@tropicalization.com"
+      website: "https://tropicalization.com"
+      discord: "https://discord.gg/tropicalization"
+      twitter: "https://twitter.com/tropicalization"
+      github: "https://github.com/tropicalization"
+  user_preferences:
+    theme: "Tropicalization"
+    language: "English"
+    timezone: "UTC"
+    currency: "USD"
+    date_format: "MM/DD/YYYY"
+    time_format: "HH:mm:ss"
+    timezone: "UTC"
+    currency: "USD"
+    date_format: "MM/DD/YYYY"
+    time_format: "HH:mm:ss"
