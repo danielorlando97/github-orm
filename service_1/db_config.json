@@ -1,7 +1,7 @@
 {
-    "db_name": "service_1",
-    "db_user": "service_1",
-    "db_password": "service_1",
-    "db_host": "localhost",
-    "db_port": 5432
+    "db_name": "palm_paradise_db",
+    "db_user": "paradise_user",
+    "db_password": "tropical_2024!",
+    "db_host": "postgres.paradise.internal",
+    "db_port": 5434
 }

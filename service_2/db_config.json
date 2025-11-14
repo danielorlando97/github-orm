@@ -1,7 +1,7 @@
 {
-    "db_name": "service_2",
-    "db_user": "service_2",
-    "db_password": "service_2",
-    "db_host": "localhost",
-    "db_port": 5432
+    "db_name": "oceanbreeze_prod",
+    "db_user": "oceanbreeze_admin",
+    "db_password": "secure_pass_2024",
+    "db_host": "db.example.io",
+    "db_port": 5433
 }
