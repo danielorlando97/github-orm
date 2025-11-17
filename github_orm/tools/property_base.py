@@ -41,6 +41,9 @@ class Field:
             return Field(self.format + other)
         return Field(self.format + other.format)
     
+    def __repr__(self) -> str:
+        return f"Field(format={self.format})"
+    
 if __name__ == "__main__":
     text = "config/mops/{tenant}"
     field = Field.create_field(text)

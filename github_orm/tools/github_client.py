@@ -1,8 +1,12 @@
+import os
 import base64
 import requests
 from typing import List
-import pprint
+from dotenv import load_dotenv
 
+load_dotenv()
+
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 
 class GitHubClient:
     """Client for GitHub API."""
@@ -11,21 +15,37 @@ class GitHubClient:
     
     def get_repos(self, owner: str) -> List[dict]:
         """Get all repos from owner."""
-        response = requests.get(
-            f"https://api.github.com/users/{owner}/repos",
-            headers={"Authorization": f"Bearer {self.token}"}
-        )
-        
-        return [repo['name'] for repo in response.json()]
+        page = 1
+        while True:
+            response = requests.get(
+                f"https://api.github.com/users/{owner}/repos?page={page}",
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            response_json = response.json()
+            for repo in response_json:
+                yield repo['name']
+                
+            if len(response_json) < 30:
+                break
+            
+            page += 1
     
     def get_branches(self, owner: str, repo: str) -> List[dict]:
         """Get all branches from repository."""
-        response = requests.get(
-            f"https://api.github.com/repos/{owner}/{repo}/branches",
-            headers={"Authorization": f"Bearer {self.token}"}
-        )
-        
-        return [branch['name'] for branch in response.json()]
+        page = 1
+        while True:
+            response = requests.get(
+                f"https://api.github.com/repos/{owner}/{repo}/branches?page={page}",
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            response_json = response.json()
+            for branch in response_json:
+                yield branch['name']
+                
+            if len(response_json) < 30:
+                break
+                
+            page += 1
 
     def get_path(self, owner: str, repo: str, branch: str) -> List[dict]:
         """Get all paths from repository."""
@@ -35,7 +55,6 @@ class GitHubClient:
         )
         
         response_json = response.json()
-        print(response_json)
         return [item['path'] for item in response_json['tree'] if item['type'] == 'blob']
 
     def get_file_content(self, owner: str, repo: str, branch: str, path: str) -> str:
@@ -50,9 +69,12 @@ class GitHubClient:
 
 if __name__ == "__main__":
     client = GitHubClient()
-    print(client.get_repos("Foris"))
-    print(client.get_branches("Foris", "foris-ml"))
-    print(client.get_path("Foris", "foris-ml", "develop"))
+    print(list(client.get_repos("danielorlando97")))
+    print(list(client.get_branches("danielorlando97", "github-orm")))
+    print(client.get_path("danielorlando97", "github-orm", "data/test/client_2"))
     print(client.get_file_content(
-        "Foris", "foris-ml", "develop", "images/preprocessing/transformers/encodings.py"
+       "danielorlando97", 
+       "github-orm", 
+       "data/test/client_2", 
+       "service_2/db_config.json"
     ))

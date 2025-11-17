@@ -1,40 +1,32 @@
-# from github_orm.tools.github_handler_base import Meta, GitHubHandlerManager, GitHubModel
-# from github_orm.tools.property_base import Field
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
-# meta = Meta(
-#     owner="Foris",
-#     repo="foris-ml",
-#     branch="develop",
-#     folder_path="images/{image}",
-# )
-# manager = GitHubHandlerManager(GitHubModel, meta)
-# for data in manager.all():
-#     print(data)
-# import inspect
+from github_orm.tools.github_handler_base import GitHubModel, GitHubFile
 
-# class PiperIntegrationConfig:
-#     class Meta:
-#         file_name = "piper_config.json"
-    
-# class ConcurrencyConfig:
-#     class Meta:
-#         file_name = "concurrency_config.json"
+class DbConfig(GitHubFile):
+    class Meta:
+        file_name = 'db_config.json'
 
-# class MopsConfig:
-#     class Meta:
-#         owner = "myorg"
-#         repo = "myrepo"
-#         branch = r'config/mops/{tenant_code}'
-#         folder_path = r'configs/mops/{operation_code}/piper_integration/'
+class TropicalizationConfig(GitHubFile):
+    class Meta:
+        file_name = 'tropicalization.yaml'
+
+class TestConfig(GitHubModel):
+    class Meta:
+        owner = 'danielorlando97'
+        repo = 'github-orm'
+        branch = 'data/test/{client}'
+        folder_path = '{service}/'
         
-#     tenant: str = None
-#     operation: str
-#     piper_integration_config: PiperIntegrationConfig
-#     concurrency_config: ConcurrencyConfig
+    client: str
+    service: str
+    db_config: DbConfig
+    tropicalization_config: TropicalizationConfig
 
-# for property in inspect.getmembers(MopsConfig):
-#     print(property)
-# print("--------------------------------")
-# for property, value in inspect.get_annotations(MopsConfig).items():
-#     print(property, value)
+for config in TestConfig.objects.all():
+    print("--------------------------------")
+    print(config.client)
+    print(config.service)
+    print(config.db_config.read())
+    print(config.tropicalization_config.read())
 
