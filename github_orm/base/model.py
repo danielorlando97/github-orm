@@ -31,6 +31,13 @@ class GitHubModel:
                 pass
             
             setattr(self, property, property_value)
+            
+    def __getattribute__(self, name: str):
+        value = super().__getattribute__(name)
+        
+        if isinstance(value, GitHubFileProperty):
+            return value.read()
+        return value
 
     @classproperty
     def objects(cls) -> 'GitHubQueryBuilder':

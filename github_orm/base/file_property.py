@@ -1,3 +1,6 @@
+import json
+import yaml
+from dotmap import DotMap
 from typing import Optional
 from github_orm.github_client.router import GitHubRouter
 from github_orm import github_client as GitHubClient
@@ -21,3 +24,22 @@ class GitHubFileProperty:
         )
         return content
 
+class GitHubJsonProperty(GitHubFileProperty):
+    def read(self):
+        try:
+            return getattr(self, '__dot_map_content')
+        except AttributeError:
+            content = super().read()
+            self.__current_content = json.loads(content)
+            self.__dot_map_content = DotMap(self.__current_content)
+            return self.__dot_map_content
+    
+class GitHubYamlProperty(GitHubFileProperty):
+    def read(self):
+        try:
+            return getattr(self, '__dot_map_content')
+        except AttributeError:
+            content = super().read()
+            self.__current_content = yaml.load(content, Loader=yaml.FullLoader)
+            self.__dot_map_content = DotMap(self.__current_content)
+            return self.__dot_map_content

@@ -1,15 +1,22 @@
 """Minimalist tests for GitHub ORM read layer."""
 import pytest
-from github_orm.base import GitHubFileProperty, GitHubModel
+from dotmap import DotMap
+from github_orm.base import GitHubModel, GitHubFileProperty
+from github_orm.base.file_property import GitHubJsonProperty, GitHubYamlProperty
 
 
-class DbConfig(GitHubFileProperty):
+class ConfigFile(GitHubFileProperty):
+    """Base class for configuration files."""
+    class Meta:
+        file_name = 'db_config.json'
+
+class DbConfig(GitHubJsonProperty):
     """Database configuration file."""
     class Meta:
         file_name = 'db_config.json'
 
 
-class TropicalizationConfig(GitHubFileProperty):
+class TropicalizationConfig(GitHubYamlProperty):
     """Tropicalization configuration file."""
     class Meta:
         file_name = 'tropicalization.yaml'
@@ -26,6 +33,7 @@ class TestConfig(GitHubModel):
     client: str
     service: str
     db_config: DbConfig
+    config_file: ConfigFile
     tropicalization_config: TropicalizationConfig
 
 
@@ -55,18 +63,14 @@ class TestReadLayer:
             assert config.service.startswith('service_')
             
             # Test reading db_config file
-            db_content = config.db_config.read()
+            db_content = config.db_config
             assert db_content is not None
-            assert len(db_content) > 0
-            # JSON files should contain db_name or be valid JSON
-            assert 'db_name' in db_content or '{' in db_content
+            assert db_content.db_name is not None
             
             # Test reading tropicalization file
-            trop_content = config.tropicalization_config.read()
+            trop_content = config.tropicalization_config
             assert trop_content is not None
-            assert len(trop_content) > 0
-            # YAML files should contain 'tropicalization' or ':'
-            assert 'tropicalization' in trop_content or ':' in trop_content
+            assert trop_content.tropicalization is not None
     
     def test_read_specific_client_branch(self):
         """Test reading from a specific client branch."""
@@ -104,14 +108,14 @@ class TestReadLayer:
         first_config = configs[0]
         
         # Test db_config read
-        db_content = first_config.db_config.read()
-        assert isinstance(db_content, str)
-        assert len(db_content) > 0
+        db_content = first_config.db_config
+        assert isinstance(db_content, DotMap)
+        assert db_content.db_name is not None
         
         # Test tropicalization read
-        trop_content = first_config.tropicalization_config.read()
-        assert isinstance(trop_content, str)
-        assert len(trop_content) > 0
+        trop_content = first_config.tropicalization_config
+        assert isinstance(trop_content, DotMap)
+        assert trop_content.tropicalization is not None
     
     def test_model_properties(self):
         """Test that model properties are correctly populated."""
@@ -130,9 +134,7 @@ class TestReadLayer:
             assert config.service is not None
             
             # Verify file properties are instances
-            assert isinstance(config.db_config, DbConfig)
-            assert isinstance(
-                config.tropicalization_config,
-                TropicalizationConfig
-            )
+            assert isinstance(config.db_config, DotMap)
+            assert isinstance(config.tropicalization_config, DotMap)
+            assert isinstance(config.config_file, str)
 
