@@ -1,10 +1,18 @@
+import inspect
+from github_orm.tools.utils import classproperty
+from github_orm.github_client.router import GitHubRouter
+from github_orm.github_client.query_builder import GitHubQueryBuilder
+from github_orm.tools.errors import GitHubOrmError
+from github_orm.base.file_property import GitHubFileProperty
+
+
 class GitHubModel:
 
     def __init__(self, **kwargs) -> None:
         _meta = kwargs.pop('meta', None)
         for property, annotation in inspect.get_annotations(self.__class__).items():
-            if issubclass(annotation, GitHubFile):
-                setattr(self, property, annotation(Meta(**_meta)))
+            if issubclass(annotation, GitHubFileProperty):
+                setattr(self, property, annotation(GitHubRouter(**_meta)))
             
             if property in kwargs:
                 property_value = kwargs[property]
@@ -12,7 +20,10 @@ class GitHubModel:
                 try:
                     property_value = getattr(self, property)
                 except AttributeError:
-                    raise GitHubOrmError(f"Property {property} not found in {self.__class__.__name__}")
+                    raise GitHubOrmError(
+                        f"Property {property} not found in "
+                        f"{self.__class__.__name__}"
+                    )
             
             try:
                 property_value = annotation(property_value)
@@ -22,10 +33,10 @@ class GitHubModel:
             setattr(self, property, property_value)
 
     @classproperty
-    def objects(cls) -> 'GitHubHandlerManager':
+    def objects(cls) -> 'GitHubQueryBuilder':
         meta = None
         if hasattr(cls, 'Meta'):
-            meta = Meta.from_class(cls.Meta)
+            meta = GitHubRouter.from_class(cls.Meta)
         
         files = {}
         # for attr_name in dir(cls):
@@ -36,7 +47,7 @@ class GitHubModel:
         #         continue
             
         #     attr = getattr(cls, attr_name)
-        #     if isinstance(attr, GitHubFile):
+        #     if isinstance(attr, GitHubFileProperty):
         #         cls._properties[attr_name] = attr.objects
         
         return GitHubQueryBuilder(cls, meta, files)

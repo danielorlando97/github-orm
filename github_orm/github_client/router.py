@@ -1,3 +1,7 @@
+from typing import Optional, Union
+from github_orm.base.string_property import Field
+
+
 class GitHubRouter:
     """GitHubRouter class for models."""
     

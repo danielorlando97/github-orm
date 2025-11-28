@@ -1,16 +1,30 @@
+import logging
+from functools import singledispatchmethod
+from typing import Optional, Union, Dict, Iterator, Type, TYPE_CHECKING
+from github_orm.github_client.router import GitHubRouter
+from github_orm.base.string_property import Field
+from github_orm import github_client as GitHubClient
+
+if TYPE_CHECKING:
+    from github_orm.base.model import GitHubModel
+    from github_orm.tools.github_handler_base import GitHubFile
+
+logger = logging.getLogger(__name__)
+
+
 class GitHubQueryBuilder:
     """Query builder for all GitHub queries"""
     
     def __init__(
-        self, model: Type[GitHubModel], 
-        meta: Optional[Meta] = None, 
+        self, model: Type['GitHubModel'], 
+        meta: Optional[GitHubRouter] = None, 
         files: Optional[Dict[str, 'GitHubFile']] = None
     ) -> None:
         self.model = model
         self.meta = meta
         self.files = files or {}
     
-    def all(self) -> Iterator[GitHubModel]:
+    def all(self) -> Iterator['GitHubModel']:
         for data in self._build_iterator():
             yield self.model(**data)
     
