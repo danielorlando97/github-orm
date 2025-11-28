@@ -20,7 +20,8 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: ["3.13"]
-    
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
